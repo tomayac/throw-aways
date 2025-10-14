@@ -1,0 +1,28 @@
+.section {
+  padding: 1rem 0;
+}
+.section h1,
+.section h2,
+.section h3,
+.section h4,
+.section h5,
+.section h6 {
+  color: #fff;
+}
+.section h1:first-child,
+.section h2:first-child,
+.section h3:first-child,
+.section h4:first-child,
+.section h5:first-child,
+.section h6:first-child {
+  margin-top: 5px;
+}
+.section.slim {
+  padding: 1.2rem 0;
+}
+.section.padding-none {
+  padding: 1rem;
+}
+.section.padding-small {
+  padding: 2rem 5vw;
+}
