@@ -203,7 +203,11 @@
   :-moz-focusring {
     outline: auto;
   }
+  progress[hidden] ~ label {
+    display: none;
+  } 
   progress {
+
     vertical-align: baseline;
   }
   summary {
