@@ -1,27 +1,27 @@
-<meta http-equiv="origin-trial" content="/nFWiZTQ2hg+TyPStWls6AyOMWEsd+U/xL6OOEegILTNKLvz6L0b4Jkc2JPheOiT/8yD2pfW14YWAoAAABqeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZWNocm9tZS5naXRodWIuaW86NDQzIiwiZmVhdHVyZSI6IkFJUHJvbXB0QVBJTXVsdGltb2RhbElucHV0IiwiZXhwaXJ5IjoxNzc0MzEwNDAwfQ==">
-<img id="img" src="image.png" alt="" />
+<meta http-equiv="origin-trial" content="AvKXZEAcZSd7J6+HLZsuZ4AF4+rtIB9u1LUCRiB+3HvhiP1ncm1OIjTqb3h/bUobHYJA1qAyGYuQ0iGwxJt1rQ8AAABleyJvcmlnaW4iOiJodHRwczovL3RvbWF5YWMuZ2l0aHViLmlvOjQ0MyIsImZlYXR1cmUiOiJBSVByb21wdEFQSU11bHRpbW9kYWxJbnB1dCIsImV4cGlyeSI6MTc3NDMxMDQwMH0=">
+<img id="img" src="image.png" alt="">
 <output id="output"></output>
 <script type="module">
-  const session = await LanguageModel.create({
-    expectedInputs: [{ type: 'image' }, { type: 'text', languages: ['en'] }],
-  });
-  const stream = session.promptStreaming([
-    {
-      role: 'user',
-      content: [
-        {
-          type: 'image',
-          value: img,
-        },
-
-        {
-          type: 'text',
-          value: 'Describe this image in a few words.',
-        },
-      ],
-    },
-  ]);
-  for await (const chunk of stream) {
-    output.append(chunk);
-  }
+	const session = await LanguageModel.create({
+		expectedInputs: [{ type: 'image' }, { type: 'text', languages: ['en'] }],
+		});
+		const stream = session.promptStreaming([
+		{
+			role: 'user',
+			content: [
+			{
+				type: 'image',
+				value: img,
+				},
+				
+				{
+					type: 'text',
+					value: 'Describe this image in a few words.',
+					},
+					],
+					},
+					]);
+					for await (const chunk of stream) {
+						output.append(chunk);
+					}
 </script>
