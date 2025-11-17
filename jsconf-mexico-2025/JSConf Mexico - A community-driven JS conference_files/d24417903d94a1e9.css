@@ -205,9 +205,8 @@
   }
   progress[hidden] ~ label {
     display: none;
-  } 
+  }
   progress {
-
     vertical-align: baseline;
   }
   summary {

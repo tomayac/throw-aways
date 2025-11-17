@@ -1,0 +1,57 @@
+.button-module-scss-module__F8D9Gq__button {
+  text-align: center;
+  height: 60px;
+  font-family: var(--font-akira);
+  letter-spacing: -0.32px;
+  color: #141414;
+  cursor: inherit;
+  background-color: #f6b51e;
+  border: 4px solid #1e1e1e;
+  border-radius: 36px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 2rem;
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+  display: flex;
+}
+@media (max-width: 440px) {
+  .button-module-scss-module__F8D9Gq__button {
+    height: 52px;
+    font-size: 1.4rem;
+  }
+}
+.button-module-scss-module__F8D9Gq__button.button-module-scss-module__F8D9Gq__small {
+  height: 46px;
+  font-family: var(--font-akira);
+  letter-spacing: -0.28px;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 2rem;
+}
+.button-module-scss-module__F8D9Gq__button.button-module-scss-module__F8D9Gq__primary:hover {
+  color: #f6b51e;
+  background-color: #1e1e1e;
+  border-color: #f6b51e;
+}
+.button-module-scss-module__F8D9Gq__button.button-module-scss-module__F8D9Gq__secondary {
+  color: #fff;
+  background-color: #1e1e1e;
+  border-color: #1e1e1e;
+}
+.button-module-scss-module__F8D9Gq__button.button-module-scss-module__F8D9Gq__secondary:hover {
+  background-color: #f6b51e;
+  border-color: #f6b51e;
+}
+.button-module-scss-module__F8D9Gq__button.button-module-scss-module__F8D9Gq__tertiary {
+  background-color: transparent;
+  border-color: #1e1e1e;
+}
+.button-module-scss-module__F8D9Gq__button.button-module-scss-module__F8D9Gq__tertiary:hover {
+  background-color: #f6b51e;
+}

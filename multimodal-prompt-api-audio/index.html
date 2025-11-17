@@ -1,33 +1,36 @@
-<meta http-equiv="origin-trial" content="AvKXZEAcZSd7J6+HLZsuZ4AF4+rtIB9u1LUCRiB+3HvhiP1ncm1OIjTqb3h/bUobHYJA1qAyGYuQ0iGwxJt1rQ8AAABleyJvcmlnaW4iOiJodHRwczovL3RvbWF5YWMuZ2l0aHViLmlvOjQ0MyIsImZlYXR1cmUiOiJBSVByb21wdEFQSU11bHRpbW9kYWxJbnB1dCIsImV4cGlyeSI6MTc3NDMxMDQwMH0=">
-<audio controls preload="auto"><source src="hello.mp3"></audio>
+<meta
+  http-equiv="origin-trial"
+  content="AvKXZEAcZSd7J6+HLZsuZ4AF4+rtIB9u1LUCRiB+3HvhiP1ncm1OIjTqb3h/bUobHYJA1qAyGYuQ0iGwxJt1rQ8AAABleyJvcmlnaW4iOiJodHRwczovL3RvbWF5YWMuZ2l0aHViLmlvOjQ0MyIsImZlYXR1cmUiOiJBSVByb21wdEFQSU11bHRpbW9kYWxJbnB1dCIsImV4cGlyeSI6MTc3NDMxMDQwMH0="
+/>
+<audio controls preload="auto"><source src="hello.mp3" /></audio>
 <button id="button" type="button">Transcribe</button>
 <output id="output"></output>
 <script type="module">
-	button.addEventListener('click', async () => {
-		const blob = await fetch('hello.mp3').then((response) => response.blob());
-		output.textContent = '';
-		const session = await LanguageModel.create({
-			expectedInputs: [{ type: 'audio' }, { type: 'text', languages: ['en'] }],
-			expectedOutputs: [{ type: 'text', languages: ['en'] }],
-			});
-			const stream = session.promptStreaming([
-			{
-				role: 'user',
-				content: [
-				{
-					type: 'audio',
-					value: blob,
-					},
-					
-					{
-						type: 'text',
-						value: 'Transcribe this audio file.',
-						},
-						],
-						},
-						]);
-						for await (const chunk of stream) {
-							output.append(chunk);
-						}
-						});
+  button.addEventListener('click', async () => {
+    const blob = await fetch('hello.mp3').then((response) => response.blob());
+    output.textContent = '';
+    const session = await LanguageModel.create({
+      expectedInputs: [{ type: 'audio' }, { type: 'text', languages: ['en'] }],
+      expectedOutputs: [{ type: 'text', languages: ['en'] }],
+    });
+    const stream = session.promptStreaming([
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'audio',
+            value: blob,
+          },
+
+          {
+            type: 'text',
+            value: 'Transcribe this audio file.',
+          },
+        ],
+      },
+    ]);
+    for await (const chunk of stream) {
+      output.append(chunk);
+    }
+  });
 </script>
