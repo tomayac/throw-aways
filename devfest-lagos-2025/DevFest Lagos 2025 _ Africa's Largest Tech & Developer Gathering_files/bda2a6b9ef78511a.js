@@ -271,24 +271,22 @@
               }),
               (0, t.jsx)('h1', {
                 className: u.default.yearText,
-                children: '2025'
-                  .split('')
-                  .map((e, a) =>
-                    (0, t.jsx)(
-                      s.motion.span,
-                      {
-                        initial: { y: '-100%' },
-                        animate: { y: 0 },
-                        transition: {
-                          delay: 1.26 + 0.052 * a,
-                          duration: 1.042,
-                          ease: [0, 0, 0.3, 1],
-                        },
-                        children: e,
+                children: '2025'.split('').map((e, a) =>
+                  (0, t.jsx)(
+                    s.motion.span,
+                    {
+                      initial: { y: '-100%' },
+                      animate: { y: 0 },
+                      transition: {
+                        delay: 1.26 + 0.052 * a,
+                        duration: 1.042,
+                        ease: [0, 0, 0.3, 1],
                       },
-                      e
-                    )
-                  ),
+                      children: e,
+                    },
+                    e
+                  )
+                ),
               }),
               (0, t.jsx)(s.motion.div, {
                 initial: { opacity: 0, scale: 1.03 },

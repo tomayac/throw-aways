@@ -75,8 +75,8 @@
 }
 
 progress[hidden] ~ label {
-    display: none;
-  }
+  display: none;
+}
 @font-face {
   font-family: Inter Fallback;
   src: local(Arial);
@@ -239,7 +239,6 @@ button {
 }
 ol,
 ul {
-  
 }
 input::-webkit-outer-spin-button {
   -webkit-appearance: none;

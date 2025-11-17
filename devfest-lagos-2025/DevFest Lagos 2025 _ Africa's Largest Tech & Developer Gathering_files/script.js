@@ -4,7 +4,9 @@ const progress = document.querySelector('progress');
 const form = document.querySelector('form');
 const input = document.querySelector('input');
 const output = document.querySelector('output[for=input]');
-const bioText = document.querySelector('.schedule-day-card-module-scss-module__oCZGNq__scheduleItems').innerText.trim();
+const bioText = document
+  .querySelector('.schedule-day-card-module-scss-module__oCZGNq__scheduleItems')
+  .innerText.trim();
 
 let sessionCreationTriggered = false;
 let localSession = null;
@@ -66,13 +68,13 @@ form.addEventListener('submit', async (e) => {
       `You are an expert in answering questions about the conference DevFest Lagos, Nigeria. The schedule is the following:\n\n${bioText}`
     );
     localSession = await createSession({
-      expectedInputs: [{ type: 'text', languages: ['en'] }, ],
+      expectedInputs: [{ type: 'text', languages: ['en'] }],
       expectedOutputs: [{ type: 'text', languages: ['en'] }],
       initialPrompts: [
         {
           role: 'system',
-          content: `You are an expert in answering questions about the conference DevFest Lagos, Nigeria. The schedule is the following:\n\n${bioText}`
-        }
+          content: `You are an expert in answering questions about the conference DevFest Lagos, Nigeria. The schedule is the following:\n\n${bioText}`,
+        },
       ],
     });
     promptButton.disabled = false;
@@ -94,32 +96,29 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
-document
-  .querySelector('#translate')
-  .addEventListener('click', async () => {
-    const abstracts = document.querySelectorAll('h3');        
-    try {
-      const translator = await Translator.create({
-        sourceLanguage: 'en',
-        targetLanguage: 'fr',
-      });
-      for (const abstract of abstracts){      
-        const stream = translator.translateStreaming(abstract.textContent);
-        let result = '';
-        for await (const chunk of stream) {
-          result += chunk;
-          abstract.textContent = result;
-        }
-      }      
-    } catch (err) {
-      console.error(err.message);
+document.querySelector('#translate').addEventListener('click', async () => {
+  const abstracts = document.querySelectorAll('h3');
+  try {
+    const translator = await Translator.create({
+      sourceLanguage: 'en',
+      targetLanguage: 'fr',
+    });
+    for (const abstract of abstracts) {
+      const stream = translator.translateStreaming(abstract.textContent);
+      let result = '';
+      for await (const chunk of stream) {
+        result += chunk;
+        abstract.textContent = result;
+      }
     }
-  });
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
 document
   .querySelector('#summarize-button')
-  .addEventListener('click', async () => {    
-    
+  .addEventListener('click', async () => {
     try {
       const summarizer = await Summarizer.create({
         expectedInputLanguages: ['en'],
@@ -129,13 +128,12 @@ document
           'This is the schedule of a conference called "DevFest Lagos".',
       });
 
-      const stream = summarizer.summarizeStreaming(bioText, {
-        
-      });
+      const stream = summarizer.summarizeStreaming(bioText, {});
       let result = '';
       for await (const chunk of stream) {
         result += chunk;
-        document.querySelector('.summarize-output').innerHTML = marked.parse(result);
+        document.querySelector('.summarize-output').innerHTML =
+          marked.parse(result);
       }
     } catch (err) {
       document.querySelector('.summarize-output').textContent = err.message;
