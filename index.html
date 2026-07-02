@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prebid.js + Cross-Origin Storage</title>
+  <style>
+    body { font-family: sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.2rem; }
+    #log { background: #f5f5f5; border-radius: 4px; padding: 1rem; font-family: monospace; font-size: 0.8rem; white-space: pre; min-height: 6rem; }
+    #ad-slot { width: 300px; height: 250px; background: #eee; border: 1px dashed #aaa; display: flex; align-items: center; justify-content: center; margin-top: 1rem; color: #888; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <h1>Prebid.js + Cross-Origin Storage demo</h1>
+  <pre id="log"></pre>
+  <div id="ad-slot">300×250 ad slot</div>
+
+  <script type="module">
+    import { fetchBlob } from 'https://esm.sh/cos-resource-fetcher@0.2.0/es2022/cos-resource-fetcher.mjs';
+
+    // Prebid.js 11.22.0 "not-for-prod" build (all modules, 3.3 MB).
+    // In production a publisher would use their own trimmed build; the hash
+    // would be computed once at build time: curl -sL <url> | sha256sum
+    //
+    // PHL note: for cross-origin cache hits (a different publisher's site
+    // benefiting from this origin's cached copy), the Prebid.js hash must
+    // appear on the browser's Public Hash List. For same-origin hits (repeat
+    // visits to the same publisher site), the spec guarantees read-back
+    // regardless of PHL status ("original storer access").
+    const PREBID = {
+      version: '11.22.0',
+      url: 'https://cdn.jsdelivr.net/npm/prebid.js@11.22.0/dist/not-for-prod/prebid.js',
+      sha256: '47d29a801e93b8a741760a758ba9d595a2a7f5000d4f7a2aa154512ef2bc2b61',
+    };
+
+    const logEl = document.getElementById('log');
+    function log(msg) {
+      logEl.textContent += `${new Date().toISOString().slice(11, 23)}  ${msg}\n`;
+    }
+
+    // Turn a Blob into a blob: URL, inject it as a <script>, then revoke the URL.
+    function injectBlobAsScript(blob) {
+      return new Promise((resolve, reject) => {
+        const blobUrl = URL.createObjectURL(blob);
+        const script = Object.assign(document.createElement('script'), {
+          src: blobUrl,
+          onload() { URL.revokeObjectURL(blobUrl); resolve(); },
+          onerror() { URL.revokeObjectURL(blobUrl); reject(new Error('blob script injection failed')); },
+        });
+        document.head.appendChild(script);
+      });
+    }
+
+    // Last-resort fallback: a plain <script src> tag, no caching layer at all.
+    function loadScriptFromNetwork(url) {
+      return new Promise((resolve, reject) => {
+        const script = Object.assign(document.createElement('script'), {
+          src: url,
+          onload: resolve,
+          onerror: () => reject(new Error('network script load failed')),
+        });
+        document.head.appendChild(script);
+      });
+    }
+
+    async function loadPrebid() {
+      const cosAvailable = 'crossOriginStorage' in navigator;
+      log(`Prebid.js ${PREBID.version}`);
+      log(`COS available: ${cosAvailable}`);
+      log('Fetching…');
+
+      try {
+        // fetchBlob() checks COS first (if available), then the Cache API,
+        // then falls back to the network — storing the result for next time.
+        const blob = await fetchBlob(PREBID.url, {
+          sha256: PREBID.sha256,
+          onProgress({ loaded, total }) {
+            if (total) {
+              const pct = Math.round((loaded / total) * 100);
+              // Overwrite the last progress line in place.
+              logEl.textContent = logEl.textContent.replace(/\n  ↳.*$/, '');
+              logEl.textContent += `\n  ↳ ${pct}% (${(loaded / 1_024).toFixed(0)} KB)`;
+            }
+          },
+        });
+        logEl.textContent += '\n';
+        const source = cosAvailable ? 'COS' : 'Cache API / network';
+        log(`Loaded from ${source} (${(blob.size / 1_024).toFixed(0)} KB)`);
+        await injectBlobAsScript(blob);
+      } catch (err) {
+        log(`fetchBlob failed: ${err.message}`);
+        log('Falling back to plain network <script> tag…');
+        await loadScriptFromNetwork(PREBID.url);
+        log('Loaded from network (no caching layer)');
+      }
+    }
+
+    function runAuction() {
+      window.pbjs = window.pbjs || {};
+      pbjs.que = pbjs.que || [];
+
+      pbjs.que.push(() => {
+        pbjs.setConfig({ bidderTimeout: 1_000 });
+
+        pbjs.addAdUnits([{
+          code: 'div-gpt-ad-banner',
+          mediaTypes: { banner: { sizes: [[300, 250]] } },
+          bids: [{ bidder: 'appnexus', params: { placementId: 13232354 } }],
+        }]);
+
+        pbjs.requestBids({
+          timeout: 1_000,
+          bidsBackHandler(bids) {
+            const codes = Object.keys(bids);
+            log(`Auction complete — ${codes.length} ad unit(s)`);
+            for (const code of codes) {
+              const count = bids[code]?.bids?.length ?? 0;
+              log(`  ${code}: ${count} bid(s)`);
+            }
+            // Here a real page would call the ad server (e.g. GAM) with
+            // pbjs.setTargetingForGPTAsync() and then refresh the slot.
+          },
+        });
+      });
+    }
+
+    // --- main ---
+    try {
+      await loadPrebid();
+      log('Prebid.js ready');
+      runAuction();
+    } catch (err) {
+      // Prebid.js failed to load entirely. The page is still functional:
+      // the ad server call would fire without bid targeting.
+      log(`Could not load Prebid.js: ${err.message}`);
+      log('Ad server would still fire without bid targeting.');
+    }
+  </script>
+</body>
+</html>
