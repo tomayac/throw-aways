@@ -65,7 +65,7 @@
     }
 
     async function loadPrebid() {
-      const cosAvailable = 'crossOriginStorage' in navigator;
+      const cosAvailable = typeof navigator.crossOriginStorage?.getFileHandle === 'function';
       log(`Prebid.js ${PREBID.version}`);
       log(`COS available: ${cosAvailable}`);
       log('Fetching…');
